@@ -1,0 +1,50 @@
+.mainpage__container {
+    padding: 0 10%;
+}
+
+.mainpage__header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    align-items: center;
+}
+
+.mainpage__header-title {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.mainpage__header-logout {
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.mainpage__header-logout:hover {
+    color: #005bb5;
+}
+
+.mainpage__welcome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.mainpage__welcome-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.mainpage__welcome-add-button {
+    background: #007aff;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}

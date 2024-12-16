@@ -1,0 +1,48 @@
+.datepicker__container {
+  display: flex;
+  flex-direction: column;
+}
+
+.datepicker__label {
+  font-size: 14px;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.datepicker__input {
+  padding: 0.5rem;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+.datepicker__input:focus {
+  border-color: #007bff;
+}
+
+.datepicker__mode-toggle {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.datepicker__mode-toggle button {
+  padding: 0.5rem 1rem;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.datepicker__mode-toggle button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.datepicker__range {
+  display: flex;
+  gap: 1rem;
+}

@@ -1,0 +1,22 @@
+.imageupload__container {
+  display: flex;
+  flex-direction: column;
+}
+
+.imageupload__label {
+  font-size: 14px;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.imageupload__input {
+  margin-bottom: 1rem;
+}
+
+.imageupload__preview {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
