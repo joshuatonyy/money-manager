@@ -5,6 +5,7 @@ import (
 	"money-manager/cmd/router"
 	"money-manager/db"
 	"money-manager/db/sqlc"
+	"money-manager/internal/transaction"
 	"money-manager/internal/user"
 )
 
@@ -20,11 +21,11 @@ func main() {
 	userSvc := user.NewService(userRep)
 	userHandler := user.NewHandler(userSvc)
 
-	// postRep := post.NewRepository(queries)
-	// postSvc := post.NewService(postRep)
-	// postHandler := post.NewHandler(postSvc)
+	transactionRep := transaction.NewRepository(queries)
+	transactionSvc := transaction.NewService(transactionRep)
+	transactionHandler := transaction.NewHandler(transactionSvc)
 
 
-	router.InitRouter(userHandler)
+	router.InitRouter(userHandler, transactionHandler)
 	router.Start("0.0.0.0:8080")
 }

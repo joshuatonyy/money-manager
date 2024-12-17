@@ -11,6 +11,7 @@ export const ImageUpload = ({ label, onFileChange }) => {
       reader.onload = () => setPreview(reader.result);
       reader.readAsDataURL(file);
       onFileChange(file);
+      console.log(file);
     } else {
       alert("Please upload a valid PNG or JPG image.");
     }

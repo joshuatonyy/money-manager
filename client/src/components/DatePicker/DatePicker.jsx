@@ -40,7 +40,9 @@ const DatePicker = ({ id, label, mode = "picker", value, onChange }) => {
           id={id}
           className="datepicker__input"
           value={value || ""}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            onChange(e.target.value);
+          }}
           required
         />
       )}

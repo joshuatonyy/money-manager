@@ -4,6 +4,8 @@ import AppleTextfield from "../AppleTextfield/AppleTextfield";
 import DatePicker from "../DatePicker/DatePicker";
 import { Dropdown } from "../Dropdown/Dropdown";
 import { ImageUpload } from "../ImageUpload/ImageUpload";
+import { useCreateTransaction } from "../../useTransaction";
+import { uploadImageApi } from "../../api";
 
 export const TransactionForm = ({
   isNew = true,
@@ -35,7 +37,51 @@ export const TransactionForm = ({
     { value: "card", label: "Card" },
   ];
 
-  const handleSubmit = () => {};
+  const { mutate: createTransaction, isLoading } = useCreateTransaction();
+
+  const handleSubmit = async () => {
+    if (
+      !amountValue ||
+      !notesValue ||
+      !notesValue ||
+      !dateValue ||
+      !categoryValue ||
+      !categoryValue ||
+      !imageFile
+    ) {
+      setErrorMessage("Please fill all the form");
+      return;
+    }
+
+    try {
+      const imagePath = await uploadImageApi(imageFile);
+      const userID = localStorage.getItem("userID");
+      createTransaction(
+        {
+          user_id: userID,
+          transaction_category: categoryValue,
+          transaction_account: accountValue,
+          transaction_date: dateValue,
+          transaction_amount: amountValue,
+          transaction_notes: notesValue,
+          transaction_image_url: imagePath,
+          transaction_verified: verifiedValue,
+        },
+        {
+          onSuccess: () => {
+            setErrorMessage("");
+            alert("Transaction created successfully!");
+          },
+          onError: (error) => {
+            alert("Error creating transaction: " + error.message);
+          },
+        }
+      );
+    } catch (error) {
+      setErrorMessage("Error on uploading transaction, try again later");
+      console.error("Error: ", error);
+    }
+  };
 
   const handleCategoryDropdownChange = (e) => {
     setCategoryValue(e.target.value);
@@ -114,13 +160,15 @@ export const TransactionForm = ({
             label="Notes"
             type="text"
             value={notesValue}
-            onChange={(e) => setNotesValue(e.target.value)}
+            onChange={(e) => {
+              setNotesValue(e.target.value);
+            }}
             initialValue={notesValue}
             required
           />
 
           {/* Upload Image */}
-          <ImageUpload label="Upload" onFileChange={setImageFile}/>
+          <ImageUpload label="Upload" onFileChange={setImageFile} />
 
           {/* Verified */}
           <div className="transactionform__verified">

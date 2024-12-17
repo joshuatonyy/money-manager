@@ -27,3 +27,33 @@ export const registerApi = async (userData) => {
   const response = await apiClient.post("/signup", userData);
   return response.data;
 };
+
+// Create Transaction
+export const createTransactionApi = async (transactionData) => {
+  try {
+    const response = await apiClient.post("/transactions/", transactionData);
+    return response.data;
+  } catch (error) {
+    console.error("Create transaction error:", error.response?.data || error.message);
+    throw error;
+  }
+}
+
+// Upload Image
+export const uploadImageApi = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await axios.post(`${API_URL}/transactions/upload-image`, formData, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data.filePath;
+  } catch (error) {
+    console.error("Image upload error:", error.response?.data || error.message);
+    throw error;
+  }
+};

@@ -13,6 +13,10 @@ export const MainPage = () => {
   const [isNew, setIsNew] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const handleOnLogin = () => {
+    navigate('/auth');
+  }
+
   const handleOpenPopup = () => {
     setIsNew(true);
     setIsTransactionFormVisible(true);
@@ -24,7 +28,7 @@ export const MainPage = () => {
 
   return (
     <div className="mainpage__container">
-      <Header />
+      <Header onLogin={handleOnLogin}/>
 
       <div className="mainpage__welcome">
         <p className="mainpage__welcome-title">
