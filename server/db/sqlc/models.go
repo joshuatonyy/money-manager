@@ -4,6 +4,22 @@
 
 package sqlc
 
+import (
+	"time"
+)
+
+type Transaction struct {
+	TransactionID       int64     `json:"transaction_id"`
+	UserID              int32     `json:"user_id"`
+	TransactionCategory string    `json:"transaction_category"`
+	TransactionAccount  string    `json:"transaction_account"`
+	TransactionDate     time.Time `json:"transaction_date"`
+	TransactionAmount   string    `json:"transaction_amount"`
+	TransactionNotes    string    `json:"transaction_notes"`
+	TransactionImageUrl string    `json:"transaction_image_url"`
+	TransactionVerified bool      `json:"transaction_verified"`
+}
+
 type User struct {
 	ID       int64  `json:"id"`
 	Username string `json:"username"`
