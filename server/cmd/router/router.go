@@ -24,6 +24,8 @@ func InitRouter(userHandler *user.Handler, transactionHandler *transaction.Handl
 
 	r.Use(cors.New(config))
 
+	r.Static("/uploads", "./uploads")
+
 	r.POST("/signup", userHandler.CreateUser)
 	r.POST("login", userHandler.Login)
 	r.GET("/logout", userHandler.Logout)

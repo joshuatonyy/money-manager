@@ -31,6 +31,13 @@
     color: red;
     margin: 0;
   }
+
+  .transaction-card__body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+  }
   
   .transaction-card__details {
     font-size: 0.9rem;
@@ -46,5 +53,12 @@
     font-style: italic;
     color: #555;
     margin: 0;
+  }
+
+  .transaction-card__verified {
+    margin: 0;
+    margin-top: 15px;
+    font-weight: bold;
+    color: green;
   }
   

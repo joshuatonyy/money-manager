@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./DatePicker.css";
 
 const DatePicker = ({ id, label, mode = "picker", value, onChange }) => {
   const isRangeMode = mode === "range";
+
+  const [formattedDate, setFormattedDate] = useState("");
+
+  useEffect(() => {
+    if (value && mode === "picker") {
+      const date = new Date(value);
+      const formatted = date.toISOString().split("T")[0];
+      setFormattedDate(formatted);
+    }
+  }, [value]);
 
   return (
     <div className="datepicker__container">
@@ -39,7 +49,7 @@ const DatePicker = ({ id, label, mode = "picker", value, onChange }) => {
           type="date"
           id={id}
           className="datepicker__input"
-          value={value || ""}
+          value={formattedDate || ""}
           onChange={(e) => {
             onChange(e.target.value);
           }}

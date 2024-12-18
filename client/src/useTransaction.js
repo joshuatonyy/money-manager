@@ -1,4 +1,4 @@
-import { createTransactionApi, GetTransactionsByUserIDApi } from "./api";
+import { createTransactionApi, editTransactionApi, GetTransactionsByUserIDApi } from "./api";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 
 export const useCreateTransaction = () => {
@@ -22,3 +22,14 @@ export const useGetTransactionsWithUserID = (userID) => {
     enabled: !!userID
   });
 };
+
+export const useEditTransaction = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({transactionData, transactionID}) => editTransactionApi(transactionData, transactionID),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["getTransactionsByUserID"]);
+    },
+  })
+}

@@ -62,4 +62,14 @@ export const uploadImageApi = async (file) => {
 export const GetTransactionsByUserIDApi = async (userID) => {
   const response = await apiClient.get("/transactions/", userID);
   return response.data;
-}
+};
+
+export const editTransactionApi = async (transactionData, transactionID) => {
+  try {
+    const response = await apiClient.patch(`/transactions/${transactionID}`, transactionData);
+    return response.data;
+  } catch (error) {
+    console.error("Edit transaction error:", error.response?.data || error.message);
+    throw error;
+  }
+};

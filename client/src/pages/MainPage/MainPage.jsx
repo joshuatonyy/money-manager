@@ -17,6 +17,7 @@ export const MainPage = () => {
   const [isNew, setIsNew] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState({});
 
   const categoryOptions = [
     { value: "food", label: "Food" },
@@ -31,8 +32,9 @@ export const MainPage = () => {
   ];
 
   useEffect(() => {
+    const userID = localStorage.getItem("userID");
+    const username = localStorage.getItem("username");
     setIsLoggedIn(!!username && !!userID);
-    // setLoggedInUsername(username);
   }, []);
 
   const handleOnLogin = () => {
@@ -44,6 +46,11 @@ export const MainPage = () => {
     setIsTransactionFormVisible(true);
   };
 
+  const handleOpenPopupEdit = () => {
+    setIsNew(false);
+    setIsTransactionFormVisible(true);
+  };
+
   const handleClosePopup = () => {
     setIsTransactionFormVisible(false);
   };
@@ -51,7 +58,9 @@ export const MainPage = () => {
   const logoutMutation = useLogout();
   const handleLogout = async () => {
     try {
+      console.log("masuk logout");
       await logoutMutation.mutateAsync();
+
       navigate("/");
     } catch (error) {
       setErrorMessage(
@@ -68,9 +77,13 @@ export const MainPage = () => {
   } = useGetTransactionsWithUserID(userID);
   const transactions = apiData?.data || [];
 
-  const groupedTransactions = transactions.reduce((acc, transaction) => {
-    const rawDate = new Date(transaction.transaction_date); // Parse ISO date
-    const formattedDate = rawDate.toISOString().split("T")[0]; // Get YYYY-MM-DD
+  const sortedTransactions = transactions.sort(
+    (a, b) => new Date(b.transaction_date) - new Date(a.transaction_date)
+  );
+
+  const groupedTransactions = sortedTransactions.reduce((acc, transaction) => {
+    const rawDate = new Date(transaction.transaction_date);
+    const formattedDate = rawDate.toISOString().split("T")[0];
     if (!acc[formattedDate]) {
       acc[formattedDate] = [];
     }
@@ -92,19 +105,33 @@ export const MainPage = () => {
         <p className="mainpage__welcome-title">
           {username ? `Welcome, ${username}` : "Welcome"}
         </p>
-        <div
-          className="mainpage__welcome-add-button"
-          onClick={() => {
-            handleOpenPopup();
-          }}
-        >
-          + Add Transaction
-        </div>
+        {!isLoggedIn ? (
+          <></>
+        ) : (
+          <div
+            className="mainpage__welcome-add-button"
+            onClick={() => {
+              handleOpenPopup();
+            }}
+          >
+            + Add Transaction
+          </div>
+        )}
       </div>
 
       {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-      {isLoading ? (
+      {!isLoggedIn ? (
+        <div className="mainpage__login-prompt">
+          <p>
+            Please{" "}
+            <a href="/auth" className="mainpage__auth-link">
+              Login/Register
+            </a>{" "}
+            to continue
+          </p>
+        </div>
+      ) : isLoading ? (
         <p>Loading transactions...</p>
       ) : isError ? (
         <p>Error loading transactions: {error.message}</p>
@@ -116,10 +143,14 @@ export const MainPage = () => {
             <h3 className="transaction-group__date">{date}</h3>
             {transactions.map((transaction) => (
               <TransactionCard
+                key={transaction.transaction_id}
                 transaction={transaction}
                 categoryOptions={categoryOptions}
                 accountOptions={accountOptions}
-                onClickCard={handleOpenPopup}
+                onClickCard={() => {
+                  setSelectedTransaction(transaction);
+                  handleOpenPopupEdit();
+                }}
               />
             ))}
           </div>
@@ -128,9 +159,11 @@ export const MainPage = () => {
 
       {IsTransactionFormVisible && (
         <TransactionForm
+          isNew={isNew}
           onClose={handleClosePopup}
           categoryOptions={categoryOptions}
           accountOptions={accountOptions}
+          selectedTransaction={!isNew ? selectedTransaction : null}
         />
       )}
     </div>

@@ -66,7 +66,7 @@ func (h *Handler) EditTransaction(c *gin.Context) {
 		return
 	}
 
-	transactionID, err := strconv.ParseInt(c.Param("transaction_id"), 10, 64)
+	transactionID, err := strconv.ParseInt(c.Param("transactionID"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Transaction ID"})
 		return
@@ -200,6 +200,7 @@ func (h *Handler) UploadImage(c *gin.Context) {
         return
     }
 
-    fileURL := "/uploads/" + filename
+    baseURL := c.Request.Host
+    fileURL := "http://" + baseURL + "/uploads/" + filename
     c.JSON(http.StatusOK, gin.H{"filePath": fileURL})
 }

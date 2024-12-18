@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./ImageUpload.css";
 
-export const ImageUpload = ({ label, onFileChange }) => {
+export const ImageUpload = ({ label, onFileChange, defaultPreview = null }) => {
   const [preview, setPreview] = useState(null);
+
+  useEffect(() => {
+    if (defaultPreview) {
+      setPreview(defaultPreview);
+    }
+  }, [defaultPreview]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -27,7 +33,9 @@ export const ImageUpload = ({ label, onFileChange }) => {
         className="imageupload__input"
       />
       {preview && (
-        <img src={preview} alt="Preview" className="imageupload__preview" />
+        <a href={preview} target="_blank" rel="noopener noreferrer">
+          <img src={preview} alt="Preview" className="imageupload__preview" />
+        </a>
       )}
     </div>
   );

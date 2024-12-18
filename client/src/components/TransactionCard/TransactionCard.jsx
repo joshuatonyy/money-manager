@@ -1,7 +1,12 @@
 import React from "react";
 import "./TransactionCard.css";
 
-const TransactionCard = ({ transaction, onClickCard = () => {}, categoryOptions, accountOptions }) => {
+const TransactionCard = ({
+  transaction,
+  onClickCard = () => {},
+  categoryOptions,
+  accountOptions,
+}) => {
   const translateValue = (value, options) => {
     const match = options.find((option) => option.value === value);
     return match ? match.label : value;
@@ -17,13 +22,17 @@ const TransactionCard = ({ transaction, onClickCard = () => {}, categoryOptions,
           Rp. {transaction.transaction_amount}
         </p>
       </div>
-      <div className="transaction-card__details">
-        <p className="transaction-card__account">
-          Account: {translateValue(transaction.transaction_account, accountOptions)}
-        </p>
-        <p className="transaction-card__notes">
-          Notes: {transaction.transaction_notes}
-        </p>
+      <div className="transaction-card__body">
+        <div className="transaction-card__details">
+          <p className="transaction-card__account">
+            Account:{" "}
+            {translateValue(transaction.transaction_account, accountOptions)}
+          </p>
+          <p className="transaction-card__notes">
+            Notes: {transaction.transaction_notes}
+          </p>
+        </div>
+        <p className="transaction-card__verified">{transaction.transaction_verified ? "Verified" : ""}</p>
       </div>
     </div>
   );

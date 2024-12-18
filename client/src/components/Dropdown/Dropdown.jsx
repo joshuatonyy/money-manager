@@ -13,7 +13,7 @@ export const Dropdown = ({
       <label className="dropdown__label">{label}</label>
       <select
         id={id}
-        defaultValue={defaultValue}
+        value={defaultValue}
         onChange={onChange}
         className="dropdown__select"
       >

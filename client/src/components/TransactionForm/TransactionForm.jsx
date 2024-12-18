@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./TransactionForm.css";
 import AppleTextfield from "../AppleTextfield/AppleTextfield";
 import DatePicker from "../DatePicker/DatePicker";
 import { Dropdown } from "../Dropdown/Dropdown";
 import { ImageUpload } from "../ImageUpload/ImageUpload";
-import { useCreateTransaction } from "../../useTransaction";
+import { useCreateTransaction, useEditTransaction } from "../../useTransaction";
 import { uploadImageApi } from "../../api";
 
 export const TransactionForm = ({
-  isNew = true,
+  isNew,
   onClose,
   onSubmit,
   selectedTransaction,
@@ -18,16 +18,47 @@ export const TransactionForm = ({
   const [amountValue, setAmountValue] = useState("");
   const [notesValue, setNotesValue] = useState("");
   const [verifiedValue, setVerifiedValue] = useState(false);
-  const [dateValue, setDateValue] = useState("");
+  const [dateValue, setDateValue] = useState();
   const [categoryValue, setCategoryValue] = useState("");
   const [accountValue, setAccountValue] = useState("");
   const [imageFile, setImageFile] = useState(null);
+  const [imageFileUrl, setImageFileUrl] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
   const [idValue, setIdValue] = useState(-1);
 
+  useEffect(() => {
+    if (selectedTransaction && !isNew) {
+      const date = new Date(selectedTransaction.transaction_date);
+      const formattedDate = date.toISOString().split("T")[0];
 
-  const { mutate: createTransaction, isLoading } = useCreateTransaction();
+      setAmountValue(selectedTransaction.transaction_amount || "");
+      setNotesValue(selectedTransaction.transaction_notes || "");
+      setVerifiedValue(selectedTransaction.transaction_verified || false);
+      setDateValue(formattedDate || "");
+      setCategoryValue(selectedTransaction.transaction_category || "");
+      setAccountValue(selectedTransaction.transaction_account || "");
+      setImageFileUrl(selectedTransaction.transaction_image_url || "");
+      setIdValue(selectedTransaction.transaction_id || -1);
+
+      console.log(imageFileUrl);
+    } else {
+      setAmountValue("");
+      setNotesValue("");
+      setVerifiedValue(false);
+      setDateValue("");
+      setCategoryValue("");
+      setAccountValue("");
+      setImageFileUrl("");
+      setIdValue(-1);
+    }
+
+    console.log(notesValue);
+  }, [selectedTransaction, isNew]);
+
+  const { mutate: createTransaction, isLoadingCreate } = useCreateTransaction();
+
+  const { mutate: editTransaction, isLoadingUpdate } = useEditTransaction();
 
   const handleSubmit = async () => {
     if (
@@ -37,39 +68,78 @@ export const TransactionForm = ({
       !dateValue ||
       !categoryValue ||
       !categoryValue ||
-      !imageFile
+      !(imageFile || imageFileUrl)
     ) {
       setErrorMessage("Please fill all the form");
       return;
     }
 
-    try {
-      const imagePath = await uploadImageApi(imageFile);
-      const userID = localStorage.getItem("userID");
-      createTransaction(
-        {
-          user_id: userID,
-          transaction_category: categoryValue,
-          transaction_account: accountValue,
-          transaction_date: dateValue,
-          transaction_amount: amountValue,
-          transaction_notes: notesValue,
-          transaction_image_url: imagePath,
-          transaction_verified: verifiedValue,
-        },
-        {
-          onSuccess: () => {
-            setErrorMessage("");
-            alert("Transaction created successfully!");
+    if (isNew) {
+      try {
+        const imagePath = await uploadImageApi(imageFile);
+        const userID = localStorage.getItem("userID");
+        createTransaction(
+          {
+            user_id: userID,
+            transaction_category: categoryValue,
+            transaction_account: accountValue,
+            transaction_date: dateValue,
+            transaction_amount: amountValue,
+            transaction_notes: notesValue,
+            transaction_image_url: imagePath,
+            transaction_verified: verifiedValue,
           },
-          onError: (error) => {
-            alert("Error creating transaction: " + error.message);
-          },
+          {
+            onSuccess: () => {
+              setErrorMessage("");
+              alert("Transaction created successfully!");
+              onClose();
+            },
+            onError: (error) => {
+              alert("Error creating transaction: " + error.message);
+            },
+          }
+        );
+      } catch (error) {
+        setErrorMessage("Error on uploading transaction, try again later");
+        console.error("Error: ", error);
+      }
+    } else {
+      try {
+        var imagePath;
+        if (imageFile) {
+          imagePath = await uploadImageApi(imageFile);
+        } else {
+          imagePath = imageFileUrl;
         }
-      );
-    } catch (error) {
-      setErrorMessage("Error on uploading transaction, try again later");
-      console.error("Error: ", error);
+        editTransaction(
+          {
+            transactionData: {
+              transaction_category: categoryValue,
+              transaction_account: accountValue,
+              transaction_date: dateValue,
+              transaction_amount: amountValue,
+              transaction_notes: notesValue,
+              transaction_image_url: imagePath,
+              transaction_verified: verifiedValue,
+            },
+            transactionID: idValue,
+          },
+          {
+            onSuccess: () => {
+              setErrorMessage("");
+              alert("Transaction edited successfully!");
+              onClose();
+            },
+            onError: (error) => {
+              alert("Error editing transaction: " + error.message);
+            },
+          }
+        );
+      } catch (error) {
+        setErrorMessage("Error on uploading transaction, try again later");
+        console.error("Error: ", error);
+      }
     }
   };
 
@@ -120,7 +190,7 @@ export const TransactionForm = ({
             label="Category"
             id="transaction-category"
             options={categoryOptions}
-            defaultValue=""
+            defaultValue={categoryValue}
             onChange={handleCategoryDropdownChange}
           />
 
@@ -129,7 +199,7 @@ export const TransactionForm = ({
             label="Account"
             id="transaction-account"
             options={accountOptions}
-            defaultValue=""
+            defaultValue={accountValue}
             onChange={handleAccountDropdownChange}
           />
 
@@ -158,7 +228,11 @@ export const TransactionForm = ({
           />
 
           {/* Upload Image */}
-          <ImageUpload label="Upload" onFileChange={setImageFile} />
+          <ImageUpload
+            label="Upload"
+            onFileChange={setImageFile}
+            defaultPreview={!isNew ? imageFileUrl : null}
+          />
 
           {/* Verified */}
           <div className="transactionform__verified">
