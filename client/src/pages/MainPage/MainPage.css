@@ -45,6 +45,8 @@
     padding: 10px;
     border-radius: 8px;
     font-size: 0.75rem;
+    font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
+

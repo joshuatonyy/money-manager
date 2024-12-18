@@ -1,0 +1,50 @@
+.transaction-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .transaction-card:hover {
+    cursor: pointer;
+  }
+  
+  .transaction-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+  }
+  
+  .transaction-card__category {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin: 0;
+  }
+  
+  .transaction-card__amount {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: red;
+    margin: 0;
+  }
+  
+  .transaction-card__details {
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .transaction-card__account {
+    margin: 0;
+    margin-top: 15px;
+  }
+  
+  .transaction-card__notes {
+    font-style: italic;
+    color: #555;
+    margin: 0;
+  }
+  

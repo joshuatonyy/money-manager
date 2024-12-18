@@ -12,6 +12,8 @@ export const TransactionForm = ({
   onClose,
   onSubmit,
   selectedTransaction,
+  categoryOptions,
+  accountOptions,
 }) => {
   const [amountValue, setAmountValue] = useState("");
   const [notesValue, setNotesValue] = useState("");
@@ -24,18 +26,6 @@ export const TransactionForm = ({
   const [errorMessage, setErrorMessage] = useState("");
   const [idValue, setIdValue] = useState(-1);
 
-  const categoryOptions = [
-    { value: "food", label: "Food" },
-    { value: "social_life", label: "Social Life" },
-    { value: "transport", label: "Transport" },
-    { value: "shopping", label: "Shopping" },
-  ];
-
-  const accountOptions = [
-    { value: "cash", label: "Cash" },
-    { value: "bank_accounts", label: "Bank Accounts" },
-    { value: "card", label: "Card" },
-  ];
 
   const { mutate: createTransaction, isLoading } = useCreateTransaction();
 

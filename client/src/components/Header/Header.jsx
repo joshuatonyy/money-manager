@@ -22,7 +22,6 @@ export const Header = ({
       localStorage.removeItem("username");
       localStorage.removeItem("userID");
       setIsLoggedIn(false);
-      navigate("/");
     } else {
       onLogin();
     }
