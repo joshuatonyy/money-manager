@@ -57,3 +57,9 @@ export const uploadImageApi = async (file) => {
     throw error;
   }
 };
+
+// Get Transactions From User ID
+export const GetTransactionsByUserIDApi = async (userID) => {
+  const response = await apiClient.get("/transactions/", userID);
+  return response.data;
+}

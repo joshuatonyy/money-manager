@@ -1,4 +1,4 @@
-import { createTransactionApi } from "./api";
+import { createTransactionApi, GetTransactionsByUserIDApi } from "./api";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 
 export const useCreateTransaction = () => {
@@ -10,5 +10,15 @@ export const useCreateTransaction = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(["getTransactionsByUserID"]);
     },
+  });
+};
+
+export const useGetTransactionsWithUserID = (userID) => {
+  return useQuery({
+    queryKey: ["getTransactionsByUserID", userID],
+    queryFn: () => GetTransactionsByUserIDApi(userID),
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+    enabled: !!userID
   });
 };
