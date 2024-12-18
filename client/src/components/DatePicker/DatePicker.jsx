@@ -5,6 +5,7 @@ const DatePicker = ({ id, label, mode = "picker", value, onChange }) => {
   const isRangeMode = mode === "range";
 
   const [formattedDate, setFormattedDate] = useState("");
+  const [previousValue, setPreviousValue] = useState(value)
 
   useEffect(() => {
     if (value && mode === "picker") {
@@ -14,6 +15,23 @@ const DatePicker = ({ id, label, mode = "picker", value, onChange }) => {
     }
   }, [value]);
 
+  useEffect(() => {
+    if (isRangeMode && value) {
+      const { start, end } = value;
+      if (start && end) {
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+
+        if (startDate > endDate) {
+          alert("Start date cannot be later than end date.");
+          onChange(previousValue); 
+        } else {
+          setPreviousValue(value); 
+        }
+      }
+    }
+  }, [value, isRangeMode, onChange, previousValue]);
+
   return (
     <div className="datepicker__container">
       <label className="datepicker__label">{label}</label>
@@ -21,7 +39,7 @@ const DatePicker = ({ id, label, mode = "picker", value, onChange }) => {
         <div className="datepicker__range">
           <div className="datepicker__range-item">
             <label htmlFor={`${id}-start`} className="datepicker__sub-label">
-              Start Date
+              Start Date{" "}
             </label>
             <input
               type="date"
@@ -33,7 +51,7 @@ const DatePicker = ({ id, label, mode = "picker", value, onChange }) => {
           </div>
           <div className="datepicker__range-item">
             <label htmlFor={`${id}-end`} className="datepicker__sub-label">
-              End Date
+              End Date{" "}
             </label>
             <input
               type="date"

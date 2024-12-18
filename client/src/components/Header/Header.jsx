@@ -27,14 +27,6 @@ export const Header = ({
     }
   };
 
-  const handleCreate = () => {
-    navigate("/thread")
-  };
-
-  const handleMoveToPost = () => {
-    navigate("/")
-  };
-
   return (
     <div className="header__header">
       <div className="header__header-left">

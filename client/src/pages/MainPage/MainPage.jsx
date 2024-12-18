@@ -6,6 +6,7 @@ import { TransactionForm } from "../../components/TransactionForm/TransactionFor
 import { useGetTransactionsWithUserID } from "../../useTransaction";
 import { useLogout } from "../../useAuth";
 import TransactionCard from "../../components/TransactionCard/TransactionCard";
+import DatePicker from "../../components/DatePicker/DatePicker";
 
 export const MainPage = () => {
   const userID = localStorage.getItem("userID");
@@ -18,6 +19,16 @@ export const MainPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState({});
+  const [filteredTransactions, setFilteredTransactions] = useState(null);
+
+  const today = new Date();
+  const defaultStartDate = new Date(today);
+  defaultStartDate.setDate(today.getDate() - 31);
+
+  const [dateRangeValue, setDateRangeValue] = useState({
+    start: defaultStartDate.toISOString().split("T")[0],
+    end: today.toISOString().split("T")[0],
+  });
 
   const categoryOptions = [
     { value: "food", label: "Food" },
@@ -60,7 +71,8 @@ export const MainPage = () => {
     try {
       console.log("masuk logout");
       await logoutMutation.mutateAsync();
-
+      alert("Logout Successful!");
+      setIsLoggedIn(false);
       navigate("/");
     } catch (error) {
       setErrorMessage(
@@ -81,43 +93,113 @@ export const MainPage = () => {
     (a, b) => new Date(b.transaction_date) - new Date(a.transaction_date)
   );
 
-  const groupedTransactions = sortedTransactions.reduce((acc, transaction) => {
-    const rawDate = new Date(transaction.transaction_date);
-    const formattedDate = rawDate.toISOString().split("T")[0];
-    if (!acc[formattedDate]) {
-      acc[formattedDate] = [];
-    }
-    acc[formattedDate].push(transaction);
-    return acc;
-  }, {});
+  const handleDateRangeSearch = () => {
+    const { start, end } = dateRangeValue;
+
+    const filtered = sortedTransactions.filter((transaction) => {
+      const transactionDate = new Date(transaction.transaction_date);
+      return (
+        transactionDate >= new Date(start) && transactionDate <= new Date(end)
+      );
+    });
+
+    setFilteredTransactions(filtered);
+  };
+
+  // useEffect(() => {
+  //   const { start, end } = dateRangeValue;
+
+  //   const filtered = sortedTransactions.filter((transaction) => {
+  //     const transactionDate = new Date(transaction.transaction_date);
+  //     return (
+  //       transactionDate >= new Date(start) && transactionDate <= new Date(end)
+  //     );
+  //   });
+
+  //   if (
+  //     JSON.stringify(filtered) !== JSON.stringify(filteredTransactions) // Avoid unnecessary updates
+  //   ) {
+  //     setFilteredTransactions(filtered);
+  //   }
+  // }, [dateRangeValue, sortedTransactions]);
+
+  const groupedTransactions = filteredTransactions
+    ? filteredTransactions.reduce((acc, transaction) => {
+        const rawDate = new Date(transaction.transaction_date);
+        // const formattedDate = rawDate.toISOString().split("T")[0];
+        const formattedDate = [
+          String(rawDate.getDate()).padStart(2, "0"), // Day (dd)
+          String(rawDate.getMonth() + 1).padStart(2, "0"), // Month (MM)
+          rawDate.getFullYear(), // Year (yyyy)
+        ].join("-");
+
+        if (!acc[formattedDate]) {
+          acc[formattedDate] = [];
+        }
+        acc[formattedDate].push(transaction);
+        return acc;
+      }, {})
+    : sortedTransactions.reduce((acc, transaction) => {
+        const rawDate = new Date(transaction.transaction_date);
+        // const formattedDate = rawDate.toISOString().split("T")[0];
+        const formattedDate = [
+          String(rawDate.getDate()).padStart(2, "0"), // Day (dd)
+          String(rawDate.getMonth() + 1).padStart(2, "0"), // Month (MM)
+          rawDate.getFullYear(), // Year (yyyy)
+        ].join("-");
+
+        if (!acc[formattedDate]) {
+          acc[formattedDate] = [];
+        }
+        acc[formattedDate].push(transaction);
+        return acc;
+      }, {});
 
   if (isError && error.response?.status === 401) {
     handleLogout();
   }
 
-  console.log(apiData);
-
   return (
     <div className="mainpage__container">
       <Header onLogin={handleOnLogin} onLogout={handleLogout} />
 
-      <div className="mainpage__welcome">
-        <p className="mainpage__welcome-title">
-          {username ? `Welcome, ${username}` : "Welcome"}
-        </p>
-        {!isLoggedIn ? (
-          <></>
-        ) : (
-          <div
-            className="mainpage__welcome-add-button"
-            onClick={() => {
-              handleOpenPopup();
-            }}
-          >
-            + Add Transaction
+      {!isLoggedIn ? (
+        <></>
+      ) : (
+        <>
+          <div className="mainpage__welcome">
+            <p className="mainpage__welcome-title">
+              {username ? `Welcome, ${username}` : "Welcome"}
+            </p>
+            <div
+              className="mainpage__welcome-add-button"
+              onClick={() => {
+                handleOpenPopup();
+              }}
+            >
+              + Add Transaction
+            </div>
           </div>
-        )}
-      </div>
+
+          <div className="mainpage__date-range">
+            {/* DATE Range */}
+            <DatePicker
+              id="date-range"
+              label=""
+              mode="range"
+              value={dateRangeValue}
+              onChange={setDateRangeValue}
+            />
+
+            <div
+              className="mainpage__date-range-search-button"
+              onClick={handleDateRangeSearch}
+            >
+              Search
+            </div>
+          </div>
+        </>
+      )}
 
       {errorMessage && <p className="error-message">{errorMessage}</p>}
 
