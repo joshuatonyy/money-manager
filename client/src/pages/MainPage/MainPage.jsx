@@ -106,23 +106,6 @@ export const MainPage = () => {
     setFilteredTransactions(filtered);
   };
 
-  // useEffect(() => {
-  //   const { start, end } = dateRangeValue;
-
-  //   const filtered = sortedTransactions.filter((transaction) => {
-  //     const transactionDate = new Date(transaction.transaction_date);
-  //     return (
-  //       transactionDate >= new Date(start) && transactionDate <= new Date(end)
-  //     );
-  //   });
-
-  //   if (
-  //     JSON.stringify(filtered) !== JSON.stringify(filteredTransactions) // Avoid unnecessary updates
-  //   ) {
-  //     setFilteredTransactions(filtered);
-  //   }
-  // }, [dateRangeValue, sortedTransactions]);
-
   const groupedTransactions = filteredTransactions
     ? filteredTransactions.reduce((acc, transaction) => {
         const rawDate = new Date(transaction.transaction_date);
@@ -141,7 +124,6 @@ export const MainPage = () => {
       }, {})
     : sortedTransactions.reduce((acc, transaction) => {
         const rawDate = new Date(transaction.transaction_date);
-        // const formattedDate = rawDate.toISOString().split("T")[0];
         const formattedDate = [
           String(rawDate.getDate()).padStart(2, "0"), // Day (dd)
           String(rawDate.getMonth() + 1).padStart(2, "0"), // Month (MM)

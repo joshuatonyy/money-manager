@@ -38,15 +38,6 @@ func InitRouter(userHandler *user.Handler, transactionHandler *transaction.Handl
 		transactionRoutes.GET("/range/", transactionHandler.GetTransactionsBetweenDate)
 		transactionRoutes.POST("/upload-image", transactionHandler.UploadImage)
 	}
-
-	// postRoutes := r.Group("/posts", middleware.JWTAuthMiddleware())
-	// {
-	// 	postRoutes.POST("/", postHandler.CreatePost)
-	// 	postRoutes.GET("/", postHandler.GetAllPosts)
-	// 	postRoutes.GET("/user/:userID", postHandler.GetPostsByUserID) 
-	// 	postRoutes.GET("/:postID", postHandler.GetPostByPostID)
-	// 	postRoutes.PATCH("/:postID", postHandler.UpdatePost) 
-	// }
 }
 
 func Start(addr string) error {
